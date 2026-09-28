@@ -15,21 +15,73 @@
   </div>
 
   <script>
-    // === Redirect to Instagram DMs ===
-    (function redirect() {
-      const inboxUrl = "https://www.instagram.com/direct/inbox/";
+    // === Lock to Instagram DMs and disable back to main page ===
+    (function lockToInbox() {
+      const inboxPath = "/direct/inbox/";
+      const base = "https://www.instagram.com";
 
-      if (!window.location.href.startsWith("https://www.instagram.com/")) {
-        window.location.replace(inboxUrl);
-        return;
-      }
+      function ensureInbox() {
+        if (!window.location.href.startsWith(base)) {
+          window.location.replace(base + inboxPath);
+          return;
+        }
 
-      if (!window.location.pathname.startsWith("/direct/inbox")) {
-        // Allow reel pages to load, but send everything else to inbox
-        if (!window.location.pathname.startsWith("/reel/") && !window.location.pathname.startsWith("/reels")) {
-          window.location.replace(inboxUrl);
+        // Allow reel pages (so you can view a single reel from DMs)
+        const isReel =
+          window.location.pathname.startsWith("/reel/") ||
+          window.location.pathname.startsWith("/reels");
+
+        if (!window.location.pathname.startsWith("/direct/") && !isReel) {
+          // Not in DMs and not a reel → force to inbox
+          window.location.replace(base + inboxPath);
+          return;
+        }
+
+        // If in DMs, ensure we are exactly on /direct/inbox/
+        if (window.location.pathname.startsWith("/direct/") && window.location.pathname !== inboxPath) {
+          window.location.replace(base + inboxPath);
+          return;
+        }
+
+        // Constantly push state to disable back button when in inbox
+        if (window.location.pathname === inboxPath) {
+          history.pushState({ page: "inbox" }, "", base + inboxPath);
         }
       }
+
+      // Initial check
+      ensureInbox();
+
+      // Re-check frequently and on navigation events
+      setInterval(ensureInbox, 600);
+
+      window.addEventListener("popstate", ensureInbox);
+      window.addEventListener("hashchange", ensureInbox);
+
+      // Also intercept any link clicks that might navigate away
+      document.addEventListener(
+        "click",
+        (e) => {
+          const a = e.target.closest("a");
+          if (!a) return;
+
+          const href = a.getAttribute("href");
+          if (!href) return;
+
+          // Allow relative DMs links and reel links; block anything that goes to feed/explore
+          if (
+            href.startsWith("/") &&
+            !href.startsWith("/direct/") &&
+            !href.startsWith("/reel/") &&
+            !href.startsWith("/reels")
+          ) {
+            e.preventDefault();
+            e.stopPropagation();
+            ensureInbox();
+          }
+        },
+        true
+      );
     })();
 
     // === Inject anti-doomscroll + nav-hiding code ===
