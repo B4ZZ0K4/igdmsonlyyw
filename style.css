@@ -1,0 +1,183 @@
+/* Hide Instagram web UI elements that lead to Feed/Reels/Explore */
+
+/* Bottom navigation bar */
+nav[role="navigation"],
+footer[role="contentinfo"],
+div[role="tablist"] {
+  display: none !important;
+}
+
+/* Common containers for nav on desktop/web */
+._aigs,
+._aigt,
+._aa63,
+._ab80,
+._ab81,
+._ab82,
+._ab83,
+._ab84,
+._ab85,
+._ab86,
+._ab87,
+._ab88,
+._ab89,
+._ab8a,
+._ab8b,
+._ab8c,
+._ab8d,
+._ab8e,
+._ab8f,
+._ab8g,
+._ab8h,
+._ab8i,
+._ab8j,
+._ab8k,
+._ab8l,
+._ab8m,
+._ab8n,
+._ab8o,
+._ab8p,
+._ab8q,
+._ab8r,
+._ab8s,
+._ab8t,
+._ab8u,
+._ab8v,
+._ab8w,
+._ab8x,
+._ab8y,
+._ab8z,
+._ab90,
+._ab91,
+._ab92,
+._ab93,
+._ab94,
+._ab95,
+._ab96,
+._ab97,
+._ab98,
+._ab99,
+._ab9a,
+._ab9b,
+._ab9c,
+._ab9d,
+._ab9e,
+._ab9f,
+._ab9g,
+._ab9h,
+._ab9i,
+._ab9j,
+._ab9k,
+._ab9l,
+._ab9m,
+._ab9n,
+._ab9o,
+._ab9p,
+._ab9q,
+._ab9r,
+._ab9s,
+._ab9t,
+._ab9u,
+._ab9v,
+._ab9w,
+._ab9x,
+._ab9y,
+._ab9z,
+._ab-a,
+._ab-b,
+._ab-c,
+._ab-d,
+._ab-e,
+._ab-f,
+._ab-g,
+._ab-h,
+._ab-i,
+._ab-j,
+._ab-k,
+._ab-l,
+._ab-m,
+._ab-n,
+._ab-o,
+._ab-p,
+._ab-q,
+._ab-r,
+._ab-s,
+._ab-t,
+._ab-u,
+._ab-v,
+._ab-w,
+._ab-x,
+._ab-y,
+._ab-z,
+._ab-0,
+._ab-1,
+._ab-2,
+._ab-3,
+._ab-4,
+._ab-5,
+._ab-6,
+._ab-7,
+._ab-8,
+._ab-9,
+._ab-a0,
+._ab-b0,
+._ab-c0,
+._ab-d0,
+._ab-e0,
+._ab-f0,
+._ab-g0,
+._ab-h0,
+._ab-i0,
+._ab-j0,
+._ab-k0,
+._ab-l0,
+._ab-m0,
+._ab-n0,
+._ab-o0,
+._ab-p0,
+._ab-q0,
+._ab-r0,
+._ab-s0,
+._ab-t0,
+._ab-u0,
+._ab-v0,
+._ab-w0,
+._ab-x0,
+._ab-y0,
+._ab-z0 {
+  display: none !important;
+}
+
+/* Hide Explore, Reels, Home links if they appear anywhere */
+a[href="/"],
+a[href="/explore/"],
+a[href="/reels/"],
+a[href="/reels"],
+a[href*="/reels"] {
+  display: none !important;
+}
+
+/* Keep DMs content visible */
+#app,
+#react-root,
+main,
+section[role="main"],
+article[role="main"] {
+  display: block !important;
+  max-width: 100% !important;
+}
+
+/* Basic dark background for the wrapper */
+body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.loading {
+  padding: 24px;
+  text-align: center;
+  opacity: 0.8;
+}
