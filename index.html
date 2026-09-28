@@ -35,11 +35,49 @@
     // === Inject anti-doomscroll + nav-hiding code ===
     (function injectIgMods() {
       const css = `
-        /* ---- Hide nav elements that lead to Feed/Reels/Explore ---- */
+        /* ---- Hide ALL bottom nav bars and tabs (Home, Search, Reels, etc.) ---- */
         nav[role="navigation"],
         footer[role="contentinfo"],
-        div[role="tablist"] {
+        div[role="tablist"],
+        div[role="menubar"],
+        header[role="banner"],
+        div.x1n2onr6.x1g763f0,
+        div.x1n2onr6.x1lkfr7t,
+        div.x1n2onr6.x1j63zf2,
+        div.x1n2onr6.x1g393a3,
+        div.x1n2onr6.x1g843a3,
+        div.x1n2onr6.x1fqp7bg,
+        div.x1n2onr6.x1c4vz4f,
+        section.x1n2onr6,
+        div.x1n2onr6:has(a[href="/"]),
+        div.x1n2onr6:has(a[href="/explore/"]),
+        div.x1n2onr6:has(a[href*="/reels"]),
+        div:has(> div > a[href="/"]),
+        div:has(> div > a[href="/explore/"]),
+        div:has(> div > a[href*="/reels"]) {
           display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
+        }
+
+        /* Hide common nav link patterns */
+        a[href="/"],
+        a[href="/explore/"],
+        a[href="/reels/"],
+        a[href="/reels"],
+        a[href*="/reels"],
+        a[aria-label="Reels"],
+        a[aria-label="Home"],
+        a[aria-label="Explore"],
+        a[aria-label="Messages"],
+        a[aria-label="Notifications"],
+        a[aria-label="Create"],
+        a[aria-label="Profile"] {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
         }
 
         /* Aggressive class list for nav containers (web) */
@@ -181,15 +219,9 @@
         ._ab-y0,
         ._ab-z0 {
           display: none !important;
-        }
-
-        /* Hide links to Feed/Explore/Reels */
-        a[href="/"],
-        a[href="/explore/"],
-        a[href="/reels/"],
-        a[href="/reels"],
-        a[href*="/reels"] {
-          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
         }
 
         /* ---- One-Reel, no doomscroll styles ---- */
@@ -203,6 +235,9 @@
         div[role="list"],
         div[role="listbox"] {
           display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
         }
 
         /* Disable scroll on main containers when on a reel page */
@@ -217,6 +252,7 @@
         div[role="listbox"].reel-page {
           overflow: hidden !important;
           overscroll-behavior: none !important;
+          height: 100% !important;
         }
       `;
 
@@ -267,31 +303,54 @@
         return origScrollIntoView.apply(this, args);
       };
 
-      // Observe DOM changes and keep killing scroll / side rails
+      // Observe DOM changes and keep killing scroll / side rails / nav
       const observer = new MutationObserver(() => {
-        if (
-          !location.pathname.startsWith("/reel/") &&
-          !location.pathname.startsWith("/reels")
-        ) {
-          return;
-        }
+        const isReel =
+          location.pathname.startsWith("/reel/") ||
+          location.pathname.startsWith("/reels");
 
+        markReelPage();
+
+        // Re-apply nav hiding in case Instagram re-injects elements
         document.querySelectorAll(
-          'div[role="feed"], div[role="list"], div[role="listbox"], section[aria-label="Reels"]'
+          'nav[role="navigation"], footer[role="contentinfo"], div[role="tablist"], div[role="menubar"], header[role="banner"]'
         ).forEach((el) => {
-          el.style.overflow = "hidden";
-          el.style.overscrollBehavior = "none";
           el.style.display = "none";
+          el.style.visibility = "hidden";
+          el.style.opacity = "0";
+          el.style.pointerEvents = "none";
         });
 
-        // Ensure page class is set if Instagram changes content dynamically
-        markReelPage();
+        // Hide reels suggestions and feeds
+        document.querySelectorAll(
+          'div[aria-label="Up next"], div[aria-label="Suggested for you"], div[aria-label="Related reels"], div[aria-label="More like this"], section[aria-label="Reels"], div[role="feed"], div[role="list"], div[role="listbox"]'
+        ).forEach((el) => {
+          el.style.display = "none";
+          el.style.visibility = "hidden";
+          el.style.opacity = "0";
+          el.style.pointerEvents = "none";
+        });
+
+        if (isReel) {
+          document.querySelectorAll(
+            'html, body, #react-root, main, section[role="main"], div[role="dialog"], div[role="feed"], div[role="list"], div[role="listbox"]'
+          ).forEach((el) => {
+            el.style.overflow = "hidden";
+            el.style.overscrollBehavior = "none";
+          });
+        }
       });
 
       observer.observe(document.documentElement, {
         childList: true,
         subtree: true,
       });
+
+      // Initial pass after a short delay to catch late-loaded elements
+      setTimeout(() => {
+        markReelPage();
+        observer.takeRecords();
+      }, 800);
     })();
   </script>
 </body>
